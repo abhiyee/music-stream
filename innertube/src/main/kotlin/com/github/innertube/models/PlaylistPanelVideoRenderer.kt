@@ -1,0 +1,16 @@
+// Flowtune Music by abhiram79
+// github.com/abhiram79
+
+package com.github.innertube.models
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class PlaylistPanelVideoRenderer(
+    val title: Runs?,
+    val longBylineText: Runs?,
+    val shortBylineText: Runs?,
+    val lengthText: Runs?,
+    val navigationEndpoint: NavigationEndpoint?,
+    val thumbnail: ThumbnailRenderer.MusicThumbnailRenderer.Thumbnail?,
+)
