@@ -39,6 +39,13 @@ fun BottomNavigation(navController: NavHostController) {
     val isSearchScreen = currentDestination?.hierarchy?.any {
         it.hasRoute(route = Routes.Search::class)
     } == true
+    val isSettingsScreen = currentDestination?.hierarchy?.any {
+        it.hasRoute(route = Routes.Settings::class) ||
+            it.hasRoute(route = Routes.SettingsPage::class)
+    } == true
+
+    if (isSettingsScreen) return
+
     var navigationLabelsVisibility by rememberPreference(
         navigationLabelsVisibilityKey,
         NavigationLabelsVisibility.Visible

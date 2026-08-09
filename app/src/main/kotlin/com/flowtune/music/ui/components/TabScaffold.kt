@@ -32,6 +32,7 @@ fun TabScaffold(
     sectionTitle: String,
     appBarActions: @Composable (() -> Unit)? = null,
     tabColumnContent: List<Section>,
+    navigationIcon: (@Composable () -> Unit)? = null,
     content: @Composable (Int) -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -51,11 +52,15 @@ fun TabScaffold(
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = onTopIconButtonClick) {
-                            Icon(
-                                imageVector = topIconButtonId,
-                                contentDescription = null
-                            )
+                        if (navigationIcon != null) {
+                            navigationIcon()
+                        } else {
+                            IconButton(onClick = onTopIconButtonClick) {
+                                Icon(
+                                    imageVector = topIconButtonId,
+                                    contentDescription = null
+                                )
+                            }
                         }
                     },
                     actions = { appBarActions?.invoke() },

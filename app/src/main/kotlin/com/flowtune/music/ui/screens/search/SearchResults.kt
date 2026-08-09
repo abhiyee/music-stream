@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.PlaylistPlay
 import androidx.compose.material.icons.outlined.Movie
 import androidx.compose.material.icons.outlined.MusicNote
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -22,6 +23,8 @@ import com.flowtune.music.models.Section
 import com.flowtune.music.ui.components.ChipScaffold
 import com.flowtune.music.ui.components.NonQueuedMediaItemMenu
 import com.flowtune.music.ui.components.SwipeToActionBox
+import com.flowtune.music.ui.items.ArtistItem
+import com.flowtune.music.ui.items.ItemPlaceholder
 import com.flowtune.music.ui.items.ListItemPlaceholder
 import com.flowtune.music.ui.items.SongItem
 import com.flowtune.music.ui.items.VideoItem
@@ -39,9 +42,10 @@ fun SearchResults(
 ) {
     val emptyItemsText = stringResource(id = R.string.no_results_found)
     val (tabIndex, onTabIndexChanges) = rememberPreference(searchResultScreenTabIndexKey, 0)
-    val clampedTabIndex = tabIndex.coerceIn(0, 1)
+    val clampedTabIndex = tabIndex.coerceIn(0, 2)
     val sections = listOf(
         Section(stringResource(id = R.string.songs), Icons.Outlined.MusicNote),
+        Section(stringResource(id = R.string.artists), Icons.Outlined.Person),
         Section(stringResource(id = R.string.others), Icons.Outlined.Movie)
     )
 
@@ -107,7 +111,35 @@ fun SearchResults(
                 )
             }
 
-            1 -> {
+            1 -> ItemsPage(
+                tag = "searchResults/$query/artists",
+                emptyItemsText = emptyItemsText,
+                itemsPageProvider = { continuation ->
+                    if (continuation == null) {
+                        Innertube.searchPage(
+                            query = query,
+                            params = Innertube.SearchFilter.Artist.value,
+                            fromMusicShelfRendererContent = Innertube.ArtistItem::from
+                        )
+                    } else {
+                        Innertube.searchPage(
+                            continuation = continuation,
+                            fromMusicShelfRendererContent = Innertube.ArtistItem::from
+                        )
+                    }
+                },
+                itemContent = { artist ->
+                    ArtistItem(
+                        artist = artist,
+                        onClick = { onArtistClick(artist.key) }
+                    )
+                },
+                itemPlaceholderContent = {
+                    ItemPlaceholder()
+                }
+            )
+
+            2 -> {
                 val binder = LocalPlayerServiceBinder.current
                 val menuState = LocalMenuState.current
 
