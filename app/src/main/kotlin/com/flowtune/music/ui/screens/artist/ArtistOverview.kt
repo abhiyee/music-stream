@@ -18,11 +18,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Podcasts
-import androidx.compose.material.icons.outlined.Shuffle
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,9 +32,7 @@ import com.github.innertube.models.NavigationEndpoint
 import com.flowtune.music.LocalPlayerPadding
 import com.flowtune.music.LocalPlayerServiceBinder
 import com.flowtune.music.R
-import com.flowtune.music.models.ActionInfo
 import com.flowtune.music.models.LocalMenuState
-import com.flowtune.music.ui.components.CoverScaffold
 import com.flowtune.music.ui.components.NonQueuedMediaItemMenu
 import com.flowtune.music.ui.components.ShimmerHost
 import com.flowtune.music.ui.components.TextPlaceholder
@@ -56,11 +51,9 @@ fun ArtistOverview(
     youtubeArtistPage: Innertube.ArtistPage?,
     onViewAllSongsClick: () -> Unit,
     onViewAllAlbumsClick: () -> Unit,
-    onViewAllSinglesClick: () -> Unit,
     onAlbumClick: (String) -> Unit,
     onArtistClick: (String) -> Unit,
     onPlaylistClick: (String) -> Unit,
-    thumbnailContent: @Composable () -> Unit,
 ) {
     val binder = LocalPlayerServiceBinder.current
     val menuState = LocalMenuState.current
@@ -75,31 +68,6 @@ fun ArtistOverview(
             .padding(top = 16.dp, bottom = 16.dp + playerPadding),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val radioEndpoint = youtubeArtistPage?.radioEndpoint
-        val shuffleEndpoint = youtubeArtistPage?.shuffleEndpoint
-
-        CoverScaffold(
-            primaryButton = ActionInfo(
-                enabled = radioEndpoint != null,
-                onClick = {
-                    binder?.stopRadio()
-                    binder?.playRadio(radioEndpoint)
-                },
-                icon = Icons.Outlined.Podcasts,
-                description = R.string.start_radio
-            ),
-            secondaryButton = ActionInfo(
-                enabled = shuffleEndpoint != null,
-                onClick = {
-                    binder?.stopRadio()
-                    binder?.playRadio(shuffleEndpoint)
-                },
-                icon = Icons.Outlined.Shuffle,
-                description = R.string.shuffle
-            ),
-            content = thumbnailContent
-        )
-
         if (youtubeArtistPage != null) {
             Spacer(modifier = Modifier.height(Dimensions.spacer))
 
@@ -177,46 +145,6 @@ fun ArtistOverview(
                 ) {
                     items(
                         items = albums,
-                        key = Innertube.AlbumItem::key
-                    ) { album ->
-                        AlbumItem(
-                            modifier = Modifier.widthIn(max = itemSize),
-                            album = album,
-                            onClick = { onAlbumClick(album.key) }
-                        )
-                    }
-                }
-            }
-
-            youtubeArtistPage.singles?.let { singles ->
-                Spacer(modifier = Modifier.height(Dimensions.spacer))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.singles),
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-
-                    youtubeArtistPage.singlesEndpoint?.let {
-                        TextButton(onClick = onViewAllSinglesClick) {
-                            Text(text = stringResource(id = R.string.view_all))
-                        }
-                    }
-                }
-
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(horizontal = 8.dp)
-                ) {
-                    items(
-                        items = singles,
                         key = Innertube.AlbumItem::key
                     ) { album ->
                         AlbumItem(

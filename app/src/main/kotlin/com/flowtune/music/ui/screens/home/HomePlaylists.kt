@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DownloadForOffline
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MusicNote
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,6 +46,7 @@ import com.flowtune.music.viewmodels.HomePlaylistsViewModel
 @Composable
 fun HomePlaylists(
     openSettings: () -> Unit,
+    onArtistsClick: () -> Unit,
     onBuiltInPlaylist: (Int) -> Unit,
     onSongsClick: () -> Unit,
     onPlaylistClick: (Playlist) -> Unit
@@ -112,6 +114,14 @@ fun HomePlaylists(
                     icon = Icons.Default.MusicNote,
                     name = stringResource(id = R.string.songs),
                     onClick = onSongsClick
+                )
+            }
+
+            item(key = "artists") {
+                BuiltInPlaylistItem(
+                    icon = Icons.Default.Person,
+                    name = stringResource(id = R.string.artists),
+                    onClick = onArtistsClick
                 )
             }
 
