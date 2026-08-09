@@ -70,6 +70,7 @@ import com.flowtune.music.ui.items.ListItemPlaceholder
 import com.flowtune.music.ui.items.SongItem
 import com.flowtune.music.ui.screens.search.ItemsPage
 import com.flowtune.music.ui.styling.px
+import com.flowtune.music.ui.styling.shimmer
 import com.flowtune.music.utils.LocalPlayerAccent
 import com.flowtune.music.utils.LocalPlayerAccentDark
 import com.flowtune.music.utils.artistScreenTabIndexKey

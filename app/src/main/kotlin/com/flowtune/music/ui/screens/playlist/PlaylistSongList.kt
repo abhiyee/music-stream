@@ -42,6 +42,7 @@ import com.flowtune.music.ui.components.SwipeToActionBox
 import com.flowtune.music.ui.items.ListItemPlaceholder
 import com.flowtune.music.ui.items.SongItem
 import com.flowtune.music.ui.styling.px
+import com.flowtune.music.ui.styling.shimmer
 import com.flowtune.music.utils.LocalPlayerAccent
 import com.flowtune.music.utils.asMediaItem
 import com.flowtune.music.utils.enqueue
