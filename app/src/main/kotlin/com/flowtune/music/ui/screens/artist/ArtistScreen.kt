@@ -3,25 +3,40 @@
 
 package com.flowtune.music.ui.screens.artist
 
-import android.content.Intent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.Album
-import androidx.compose.material.icons.outlined.BookmarkAdd
 import androidx.compose.material.icons.outlined.LibraryMusic
 import androidx.compose.material.icons.outlined.MusicNote
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.outlined.PersonAdd
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.innertube.Innertube
 import com.github.innertube.requests.itemsPage
@@ -34,13 +49,14 @@ import com.flowtune.music.models.LocalMenuState
 import com.flowtune.music.models.Section
 import com.flowtune.music.ui.components.NonQueuedMediaItemMenu
 import com.flowtune.music.ui.components.TabScaffold
-import com.flowtune.music.ui.components.TooltipIconButton
 import com.flowtune.music.ui.components.adaptiveThumbnailContent
 import com.flowtune.music.ui.items.AlbumItem
 import com.flowtune.music.ui.items.ItemPlaceholder
 import com.flowtune.music.ui.items.ListItemPlaceholder
 import com.flowtune.music.ui.items.SongItem
 import com.flowtune.music.ui.screens.search.ItemsPage
+import com.flowtune.music.utils.LocalPlayerAccent
+import com.flowtune.music.utils.LocalPlayerAccentDark
 import com.flowtune.music.utils.artistScreenTabIndexKey
 import com.flowtune.music.utils.asMediaItem
 import com.flowtune.music.utils.forcePlay
@@ -90,47 +106,77 @@ fun ArtistScreen(
         url = viewModel.artist?.thumbnailUrl
     )
 
+    val isFollowing = viewModel.artist?.bookmarkedAt != null
+
+    val followChipShape = RoundedCornerShape(percent = 50)
+
     TabScaffold(
         pagerState = pagerState,
         topIconButtonId = Icons.AutoMirrored.Outlined.ArrowBack,
         onTopIconButtonClick = pop,
         sectionTitle = viewModel.artist?.name ?: "",
         appBarActions = {
-            val context = LocalContext.current
-
-            TooltipIconButton(
-                description = if (viewModel.artist?.bookmarkedAt == null) R.string.add_bookmark else R.string.remove_bookmark,
-                onClick = {
-                    val bookmarkedAt =
-                        if (viewModel.artist?.bookmarkedAt == null) System.currentTimeMillis() else null
-
-                    database.query {
-                        viewModel.artist
-                            ?.copy(bookmarkedAt = bookmarkedAt)
-                            ?.let(database::update)
+            Box(
+                modifier = Modifier
+                    .padding(end = 16.dp)
+                    .clip(followChipShape)
+                    .background(
+                        if (isFollowing) {
+                            LocalPlayerAccentDark.copy(alpha = 0.3f)
+                        } else {
+                            LocalPlayerAccent.current
+                        }
+                    )
+                    .clickable {
+                        database.query {
+                            viewModel.artist
+                                ?.copy(
+                                    bookmarkedAt = if (isFollowing) null else System.currentTimeMillis()
+                                )
+                                ?.let(database::update)
+                        }
                     }
-                },
-                icon = if (viewModel.artist?.bookmarkedAt == null) Icons.Outlined.BookmarkAdd else Icons.Filled.Bookmark,
-                inTopBar = true
-            )
+                    .padding(horizontal = 20.dp, vertical = 10.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = if (isFollowing) Icons.Filled.Check else Icons.Outlined.PersonAdd,
+                        contentDescription = null,
+                        tint = if (isFollowing) LocalPlayerAccent.current else Color.Black,
+                        modifier = Modifier.size(18.dp)
+                    )
 
-            TooltipIconButton(
-                description = R.string.share,
-                onClick = {
-                    val sendIntent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        type = "text/plain"
-                        putExtra(
-                            Intent.EXTRA_TEXT,
-                            "https://music.youtube.com/channel/$browseId"
-                        )
-                    }
-
-                    context.startActivity(Intent.createChooser(sendIntent, null))
-                },
-                icon = Icons.Outlined.Share,
-                inTopBar = true
-            )
+                    Text(
+                        text = stringResource(
+                            id = if (isFollowing) R.string.following else R.string.follow
+                        ),
+                        color = if (isFollowing) LocalPlayerAccent.current else Color.Black,
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        },
+        navigationIcon = {
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape)
+                    .background(LocalPlayerAccent.current)
+                    .clickable(onClick = pop),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
+                    contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
         },
         tabColumnContent = tabs
     ) { index ->
@@ -273,7 +319,7 @@ fun ArtistScreen(
                                     fromMusicTwoRowItemRenderer = Innertube.AlbumItem::from,
                                 )
                             }
-                        ?: Result.success(
+                    ?: Result.success(
                             Innertube.ItemsPage(
                                 items = artistPage.singles,
                                 continuation = null
