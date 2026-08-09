@@ -122,7 +122,7 @@ fun ArtistScreen(
                     .clip(followChipShape)
                     .background(
                         if (isFollowing) {
-                            LocalPlayerAccentDark.copy(alpha = 0.3f)
+                            LocalPlayerAccentDark.current.copy(alpha = 0.3f)
                         } else {
                             LocalPlayerAccent.current
                         }
