@@ -4,11 +4,11 @@
 package com.flowtune.music.ui.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.QueueMusic
-import androidx.compose.material.icons.automirrored.outlined.QueueMusic
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.LibraryMusic
 import androidx.compose.material.icons.outlined.Search
 import com.flowtune.music.R
 
@@ -28,9 +28,9 @@ object TopDestinations {
         ),
         TopDestination(
             route = Routes.Playlists,
-            resourceId = R.string.playlists,
-            unselectedIcon = Icons.AutoMirrored.Outlined.QueueMusic,
-            selectedIcon = Icons.AutoMirrored.Filled.QueueMusic
+            resourceId = R.string.library,
+            unselectedIcon = Icons.Outlined.LibraryMusic,
+            selectedIcon = Icons.Filled.LibraryMusic
         )
     )
 

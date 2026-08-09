@@ -45,6 +45,9 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.github.innertube.Innertube
 import com.github.innertube.requests.playlistPage
@@ -127,6 +130,13 @@ class MainActivity : ComponentActivity() {
                         LocalPlayerAccentStrong provides accentStrong,
                         LocalPlayerAccentDark provides accentDark
                     ) {
+                        val navBackStackEntry by navController.currentBackStackEntryAsState()
+                        val currentDestination = navBackStackEntry?.destination
+                        val isSettingsScreen = currentDestination?.hierarchy?.any {
+                            it.hasRoute(route = Routes.Settings::class) ||
+                                it.hasRoute(route = Routes.SettingsPage::class)
+                        } == true
+
                         val menuState = LocalMenuState.current
 
                         Scaffold(
@@ -137,14 +147,16 @@ class MainActivity : ComponentActivity() {
                                     exit = slideOutVertically(targetOffsetY = { it })
                                 ) {
                                     Column {
-                                        MiniPlayer(
-                                            openPlayer = {
-                                                scope.launch { playerState.expand() }
-                                            },
-                                            stopPlayer = {
-                                                scope.launch { playerState.hide() }
-                                            }
-                                        )
+                                        if (!isSettingsScreen) {
+                                            MiniPlayer(
+                                                openPlayer = {
+                                                    scope.launch { playerState.expand() }
+                                                },
+                                                stopPlayer = {
+                                                    scope.launch { playerState.hide() }
+                                                }
+                                            )
+                                        }
                                         BottomNavigation(navController = navController)
                                     }
                                 }

@@ -66,7 +66,7 @@
     <string name="service_lifetime_information_plus">Since Android 12, disabling battery optimizations is required for the "Invincible service" option to take effect.</string>
     <string name="about">About</string>
     <string name="search">Search</string>
-    <string name="featured">Featured</string>
+    <string name="radio">Radio</string>
     <string name="confirm">Confirm</string>
     <string name="set">Set</string>
     <string name="sleep_timer">Sleep timer</string>

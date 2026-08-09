@@ -147,6 +147,9 @@ fun Navigation(
         playerComposable(route = Routes.Playlists::class) {
             HomePlaylists(
                 openSettings = { navController.navigate(route = Routes.Settings) },
+                onArtistsClick = {
+                    navController.navigate(route = Routes.Artists)
+                },
                 onBuiltInPlaylist = { playlistIndex ->
                     navController.navigate(route = Routes.BuiltInPlaylist(index = playlistIndex))
                 },
@@ -203,7 +206,6 @@ fun Navigation(
 
             PlaylistScreen(
                 browseId = route.id,
-                pop = popDestination,
                 onGoToAlbum = navigateToAlbum,
                 onGoToArtist = navigateToArtist
             )
